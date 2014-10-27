@@ -16,6 +16,7 @@ int main()
     struct addrinfo hostInfo;
     struct addrinfo *hostInfoList;
     int wasSuccessful;
+    int expected_bytes(4 * sizeof(unsigned int));
 
     memset(&hostInfo, 0, sizeof hostInfo);  // Clear the memory. (getaddrinfo needs it)
     hostInfo.ai_family = AF_UNSPEC;         // IPV4 or IPV6. Don't care.
@@ -39,8 +40,8 @@ int main()
         cout << "Failed to Connect." << endl;
     }
     ssize_t bytesReceived;
-    char receiveBuffer[1000];
-    bytesReceived = recv(newSocket, receiveBuffer,1000,0);
+    unsigned int receiveBuffer[4];
+    bytesReceived = recv(newSocket, receiveBuffer,expected_bytes,0);
     if (bytesReceived == 0)
     {
         cout << "Server Killed Connection" << endl;
@@ -49,12 +50,11 @@ int main()
     {
         cout << "Receive Error. Ears were clogged. Try again?" << endl;
     }
-    cout << "Data Received. Outputting Now." << endl;
-    for (int i = 0; i < sizeof(receiveBuffer); i++)
-    {
-        cout << receiveBuffer[i];
-    }
-    cout << receiveBuffer << endl;
+    cout << "Data Received. Outputting Now." << bytesReceived << " bytes" << endl;
+    cout << receiveBuffer[0] << endl;
+    cout << receiveBuffer[1] << endl;
+    cout << receiveBuffer[2] << endl;
+    cout << receiveBuffer[3] << endl;
     freeaddrinfo(hostInfoList);
     close(newSocket);
 
